@@ -1,0 +1,38 @@
+# purpose: Continuous Integration (build, test, lint, scan)
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: "ci"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Instal Node.js and NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install yarn
+        run: npm install -g yarn
+      - name: Install Node.js with yarn caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install
+      # TODO: lint, sonar, tests
